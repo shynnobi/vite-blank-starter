@@ -44,7 +44,13 @@ function getWorkspaces(): string[] {
   throw new Error('No pnpm-workspace.yaml or turbo.json found to detect workspaces.');
 }
 
-const workspaces = getWorkspaces();
+const IGNORED_WORKSPACES = [
+  path.normalize('packages/cli/template'),
+];
+
+const workspaces = getWorkspaces()
+  // Ignore specific workspaces like the CLI template
+  .filter(ws => !IGNORED_WORKSPACES.includes(path.relative(process.cwd(), ws)));
 const workspaceRoots = workspaces.map(ws => path.relative(process.cwd(), ws));
 
 // 3. Map each file to a workspace
